@@ -23,7 +23,7 @@ class FlyffServerBridge extends ServerBridge
     public function getServerData()
     {
         if (@fsockopen($this->server->address, $this->server->port, $errorno, $errorstr, 0.1)) {
-            $connected = DB::connection('sqlsrv')->table('CHARACTER_01_DBF.dbo.CHARACTER_TBL')->where('MultiServer', '1')->count();
+            $connected = DB::connection('sqlsrv')->table('CHARACTER_01_DBF.dbo.tblMultiServerInfo')->where('MultiServer', '1')->count();
             $maxPlayerConnected = (int) DB::connection('sqlsrv')->table('LOGGING_01_DBF.dbo.LOG_USER_CNT_TBL')->select('number')->orderByDesc('number')->first()->number;
     
             return [
@@ -92,8 +92,8 @@ class FlyffServerBridge extends ServerBridge
         $account = DB::connection('sqlsrv')->table('ACCOUNT_DBF.dbo.ACCOUNT_TBL')
                 ->select('account')->where('Azuriom_user_id', $user->id)->first();
 
-        $character = DB::connection('sqlsrv')->table('CHARACTER_01_DBF.dbo.CHARACTER_TBL')
-                ->select('m_idPlayer', 'serverindex', 'MultiServer')
+        $character = DB::connection('sqlsrv')->table('CHARACTER_01_DBF.dbo.tblMultiServerInfo')
+                ->select('m_idPlayer', 'serverindex')
                 ->where(
                     [
                         ['account', $account->account],
@@ -107,7 +107,7 @@ class FlyffServerBridge extends ServerBridge
 
     private function playerIsConnected($idPlayer, $idServer)
     {
-        $character = DB::connection('sqlsrv')->table('CHARACTER_01_DBF.dbo.CHARACTER_TBL')
+        $character = DB::connection('sqlsrv')->table('CHARACTER_01_DBF.dbo.tblMultiServerInfo')
             ->select('MultiServer')
             ->where([ //get first not deleted character
                 ['m_idPlayer', $idPlayer],
@@ -142,7 +142,7 @@ class FlyffServerBridge extends ServerBridge
 
         foreach ($commands as $command) {
             $id_name_quantity = explode(',', $command);
-            $packet = pack('VVVVV', $idServer, $idPlayer, 0, trim($id_name_quantity[0]), trim($id_name_quantity[2])).str_pad(env('FLYFF_WEBSHOP_KEY', '8b8d0c753894b018ce454b2e'), 21, ' ').pack('V', 1);
+            $packet = pack('VVVVV', $idServer, $idPlayer, 0, trim($id_name_quantity[0]), trim($id_name_quantity[2])).str_pad(env('FLYFF_WEBSHOP_KEY', '8b8j0c753854b018cel54b2e'), 21, ' ').pack('V', 1);
             fwrite($fp, $packet);
         }
 
