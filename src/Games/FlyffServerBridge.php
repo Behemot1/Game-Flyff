@@ -70,6 +70,7 @@ class FlyffServerBridge extends ServerBridge
         if ($this->playerIsConnected($idPlayer, $idServer)) {
             $this->sendItemsWithSocket($idPlayer, $idServer, $commands);
         } else {
+			$this->sendItemsWithDatabase($idPlayer, $idServer, $commands);
         }
     }
 
