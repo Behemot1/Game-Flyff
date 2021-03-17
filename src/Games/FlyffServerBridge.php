@@ -25,7 +25,7 @@ class FlyffServerBridge extends ServerBridge
         if (@fsockopen($this->server->address, $this->server->port, $errorno, $errorstr, 0.1)) {
             $connected = DB::connection('sqlsrv')->table('CHARACTER_01_DBF.dbo.tblMultiServerInfo')->where('MultiServer', '1')->count();
             $maxPlayerConnected = (int) DB::connection('sqlsrv')->table('LOGGING_01_DBF.dbo.LOG_USER_CNT_TBL')->select('number')->orderByDesc('number')->first()->number;
-    
+
             return [
                 'players' => $connected,
                 'max_players' => $maxPlayerConnected,
@@ -70,7 +70,6 @@ class FlyffServerBridge extends ServerBridge
         if ($this->playerIsConnected($idPlayer, $idServer)) {
             $this->sendItemsWithSocket($idPlayer, $idServer, $commands);
         } else {
-            $this->sendItemsWithDatabase($idPlayer, $idServer, $commands);
         }
     }
 
@@ -92,7 +91,7 @@ class FlyffServerBridge extends ServerBridge
         $account = DB::connection('sqlsrv')->table('ACCOUNT_DBF.dbo.ACCOUNT_TBL')
                 ->select('account')->where('Azuriom_user_id', $user->id)->first();
 
-        $character = DB::connection('sqlsrv')->table('CHARACTER_01_DBF.dbo.tblMultiServerInfo')
+        $character = DB::connection('sqlsrv')->table('CHARACTER_01_DBF.dbo.CHARACTER_DBF')
                 ->select('m_idPlayer', 'serverindex')
                 ->where(
                     [
